@@ -1,0 +1,116 @@
+Хід роботи
+#include <iostream>
+#include <time.h>
+using namespace std;
+
+template<typename T> class Matrix 
+{
+private:
+	T** Matr;
+	int Hight;
+	int Len;
+public:
+	Matrix(int hig, int len)
+	{
+		Hight = hig;
+		Len = len;
+		Matr = new T * [hig];
+		for (int i = 0; i < hig; i++) { Matr[i] = new T[len]; }
+	}
+
+	~Matrix()
+	{
+		for (int i = 0; i < Hight; i++) { delete[] Matr[i]; }
+		delete[] Matr;
+	}
+
+	int GetHight() { return Hight; }
+	int GetLen() { return Len; }
+
+	void FullMatrixWithRand ()
+	{
+		srand(sizeof(T) * time(0));
+		for (int i = 0; i < Hight; i++)
+		{
+			for (int j = 0; j < Len; j++)
+			{
+				Matr[i][j] = rand() % 100;
+				srand(2*(rand()) * time(0));
+			}
+		}
+	}
+
+	void PrintMatrix()
+	{
+		char strout[4];
+		char form[8];
+		for (int i = 0; i < Hight; i++)
+		{
+			for (int j = 0; j < Len; j++)
+			{
+				if (sizeof(Matr[i][j]) == sizeof(int)) { strcpy_s(form, "%3d"); }
+				if (sizeof(Matr[i][j]) == sizeof(double)) { strcpy_s(form, "%5.1f"); }
+				printf(form, Matr[i][j]);
+				cout << " ";
+			}
+			cout << endl;
+		}
+		cout << endl;
+	}
+
+	void SetValue(int i, int j, T value) { Matr[i][j] = value; }
+
+	T GetValue(int i, int j) { return Matr[i][j]; }
+
+	void RequestedFunc()
+	{
+		printf("Row  Amount of <0\n");
+		for (int i = 0; i < Hight; i++)
+		{
+			int coutn = 0;
+			bool zeroex = false;
+			for (int j = 0; j < Len; j++)
+			{
+				if (Matr[i][j] == 0) { zeroex = true; }
+			}
+			if(zeroex)
+			{
+				for (int j = 0; j < Len; j++)
+				{
+					if (Matr[i][j] < 0) { coutn++; }
+				}
+			}
+			printf("%3d  %d\n", i, coutn);
+		}
+		cout << endl;
+	}
+};
+
+int main()
+{
+
+	Matrix <int> tg(7, 9);
+	tg.FullMatrixWithRand();
+	tg.PrintMatrix();
+	tg.RequestedFunc();
+
+	Matrix <double> mt(4, 7);
+	mt.FullMatrixWithRand();
+	mt.PrintMatrix();
+	mt.RequestedFunc();
+
+	for (int i = 0; i < mt.GetHight(); i++)
+	{
+		for (int j = 0; j <rand()% mt.GetLen(); j++)
+		{
+			if(mt.GetValue(i, j) != 0){ mt.SetValue(i, j, -(mt.GetValue(i, j))); }
+		}
+		mt.SetValue(i, rand() % mt.GetLen(), 0);
+	}
+
+
+	mt.PrintMatrix();
+	mt.RequestedFunc();
+
+	return 0;
+}
